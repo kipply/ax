@@ -1,0 +1,2 @@
+setuptools
+spotipy>=2.13.0
