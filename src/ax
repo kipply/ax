@@ -90,7 +90,7 @@ def execute_ax(sp):
 if len(sys.argv) > 1:
     if sys.argv[1] == "auth":
         setup()
-    elif "noax" in sys.argv:
+    elif "noax" in sys.argv or "vi" in sys.argv:
         aliases = fetch_aliases()
         cmd = []
         for arg in sys.argv[1:]:
