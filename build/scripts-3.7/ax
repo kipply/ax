@@ -10,7 +10,6 @@ SCOPES = 'user-read-playback-state,user-modify-playback-state'
 REDIRECT_URI = 'http://localhost:8888/callback'
 CONFIG_PATH = os.getenv("HOME") + '/.config/ax/config.txt'
 CACHE_PATH = os.getenv("HOME") + '/.config/ax/cache.json'
-RC_PATHS = [os.getenv("HOME") + "/.zshrc"]
 
 def auth_sp():
     try:
@@ -28,20 +27,6 @@ def auth_sp():
         )
     )
     return sp
-
-def fetch_aliases():
-    aliases = {}
-    for rc in RC_PATHS:
-        try:
-            for line in open(rc, 'r').readlines():
-                if line.startswith("alias"):
-                    al = line[6:].split("=")
-                    if al[1][0] in list("\"\'"):
-                        al[1] = al[1][1:-2]
-                    aliases[al[0]] = al[1].strip()
-        except FileNotFoundError:
-            pass
-    return aliases
 
 def setup():
     print("Welcome to AX!")
@@ -64,50 +49,19 @@ def setup():
     f.write("{}\n".format(username))
     f.close()
 
-def execute_ax(sp):
-    if sp.current_playback() == None or sp.current_playback()['is_playing'] == False:
-        sp.start_playback()
-
-    aliases = fetch_aliases()
-
-    cmd = []
-    for arg in sys.argv[1:]:
-        if len(arg.split(" ")) > 1:
-            arg =  "'" + arg.replace("'", "\\'") + "'"
-
-        if arg in aliases:
-            for x in aliases[arg].split(" "):
-                cmd.append(x)
-        else:
-            cmd.append(arg)
-    start_process_time = time.time()
-
-    run = os.system(" ".join(cmd))
-
-    if time.time() - start_process_time > 5:
-        sp.pause_playback()
-
 if len(sys.argv) > 1:
     if sys.argv[1] == "auth":
         setup()
-    elif "noax" in sys.argv:
-        aliases = fetch_aliases()
-        cmd = []
-        for arg in sys.argv[1:]:
-            if len(arg.split(" ")) > 1:
-                arg =  "'" + arg.replace("'", "\\'") + "'"
-
-            if arg in aliases:
-                for x in aliases[arg].split(" "):
-                    cmd.append(x)
-            elif arg != "noax":
-                cmd.append(arg)
-        start_process_time = time.time()
-
-        run = os.system(" ".join(cmd))
-    else:
+    elif sys.argv[1] == "start":
         sp = auth_sp()
-        execute_ax(sp)
+        if sp.current_playback() != None and sp.current_playback()['is_playing'] == False:
+            sp.start_playback()
+    elif sys.argv[1] == "end":
+        sp = auth_sp()
+        if sp.current_playback() != None and sp.current_playback()['is_playing'] == True:
+            sp.pause_playback()
+    else:
+        print("Usage: ax {{COMMAND}}")
 else:
     print("Usage: ax {{COMMAND}}")
     sys.exit()
