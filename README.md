@@ -10,3 +10,9 @@ Installation until I get `pip`
 
 
 Configure min duration with `ax_min_duration` and set ignored cmds with `ax_ignore_types`
+
+
+Behaviour is: 
+- if no current playback (defined by spotify, basically if spotify doesn't have an active device / playlist known) then do nothing
+- on executing cmd, start music (if applicable)
+- on ending cmd, pause music IF the duration requirement is fulfilled
