@@ -5,4 +5,8 @@ Installation until I get `pip`
 
 1. clone it
 2. `python3 setup.py install` 
-3. `ax auth` 
+3. `ax auth` (enter details, mildly annoying) 
+4. Add `source path/to/ax.plugin.zsh` to your zshrc
+
+
+Configure min duration with `ax_min_duration` and set ignored cmds with `ax_ignore_types`
